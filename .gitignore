@@ -1,0 +1,36 @@
+# Data (raw + processed) — regenerable via src/synthetic_data.py or by
+# dropping in raw sensor .pkl files; kept out of version control by design.
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+# Large trained model artifacts
+results/models/*.pkl
+!results/models/.gitkeep
+models/*.joblib
+!models/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.eggs/
+.pytest_cache/
+.ipynb_checkpoints/
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log

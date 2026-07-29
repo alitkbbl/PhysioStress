@@ -1,0 +1,24 @@
+# Core dependencies, pinned to the versions this project was built and
+# verified against. The pipeline has no dependency on GPU/CUDA and runs
+# entirely on CPU.
+numpy==2.4.4
+pandas==3.0.2
+scipy==1.17.1
+scikit-learn==1.8.0
+matplotlib==3.10.8
+seaborn==0.13.2
+
+# Notes on dependencies deliberately NOT used:
+# - xgboost / lightgbm: scikit-learn's HistGradientBoostingClassifier is
+#   used instead as the gradient-boosting model (same family of algorithm,
+#   histogram-based gradient-boosted trees). Swapping in
+#   XGBClassifier/LGBMClassifier in src/modeling.py is a straightforward
+#   extension if you'd prefer one of those.
+# - shap: src/interpretability.py implements Shapley value estimation from
+#   first principles instead (Strumbelj & Kononenko sampling algorithm) --
+#   see the module docstring for details. The `shap` package is a drop-in
+#   alternative for the custom `shapley_values_sampling` function if
+#   you'd rather use it.
+# - neurokit2: simplified but documented in-house implementations of EDA
+#   tonic/phasic decomposition and ECG/PPG peak detection are used instead
+#   (see src/feature_extraction.py).

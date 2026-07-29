@@ -1,0 +1,11 @@
+modality,mean_F_stat
+Accelerometer (wrist),150.38787696232401
+Accelerometer (chest),92.03341533808484
+EMG (chest),57.161944904621315
+Respiration (chest),49.3925773684926
+Temperature (wrist),48.03427014854282
+HRV (chest ECG),33.3220971891271
+HRV (wrist BVP),28.209913957256163
+EDA (chest),20.510870675021202
+EDA (wrist),16.154306828367567
+Temperature (chest),3.0342889095476644
