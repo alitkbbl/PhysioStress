@@ -53,6 +53,8 @@ The dataset covers **15 subjects** monitored across chest and wrist devices duri
 * 📁 **Data Architecture & Formats:** Detailed dataset structure and regeneration steps can be found in **[`data/README.md`](data/README.md)**.
 * ⚙️ **Modular Execution Pipeline:** The four sequential stages (preprocessing, extraction, LOSO training, XAI) run as independent modules. Full architectural workflow is documented in **[`src/README.md`](src/README.md)**.
 
+---
+
 ## 🚀 Getting Started
 
 Follow these steps to set up the environment and reproduce the full pipeline—from synthetic signal generation to model interpretability.
@@ -72,9 +74,17 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 # Install requirements
 pip install --upgrade pip
 pip install -r requirements.txt
+
 ```
 
-Each script is independently runnable and writes its outputs to `data/processed/` or `results/` — `feature_extraction.py` reads what `synthetic_data.py` wrote to `data/raw/`, `modeling.py` reads `data/processed/features.csv`, and `interpretability.py` reads `data/processed/features_normalized.csv` plus `results/tables/model_comparison.csv`. Total runtime on a laptop CPU: **under 5 minutes** end-to-end (feature extraction and LOSO CV are each a few seconds; the Shapley-value analysis is the slowest step at roughly 2–3 minutes). The notebooks in `notebooks/` also self-generate any missing prerequisite files if run directly.
+### ✅ Running the Test Suite
+
+We maintain a suite of unit tests to ensure pipeline reliability, signal processing logic, and data integrity. Before submitting changes or after cloning, verify the project integrity:
+```bash
+# Run all tests in the 'tests/' directory with verbose output
+python3 -m unittest discover -s tests -v
+```
+
 
 ---
 
@@ -96,7 +106,7 @@ Includes full model comparison, confusion matrices, per-subject LOSO variance, f
 
 ```
 PhysioStress/
-├── README.md              — this file
+├── README.md             
 ├── requirements.txt
 ├── data/
 │   ├── README.md            — dataset details
@@ -125,7 +135,8 @@ PhysioStress/
 │   └── REPORT.md             — full technical report
 └── tests/                     — unit tests (unittest, run with `python -m unittest discover`)
 ```
+---
 
 ## Summary
 
-PhysioStress is a complete, tested, physiologically-grounded pipeline for wearable stress detection: rigorous subject-independent (LOSO) evaluation, a model that clearly and consistently beats baseline on every held-out subject, and a three-method interpretability analysis (permutation importance, a from-scratch verified Shapley-value estimator, and a univariate cross-check) that explains *why* it works rather than just reporting that it does. For the full methodology, results, error analysis, limitations, and future work, see **[`docs/REPORT.md`](docs/REPORT.md)**.
+PhysioStress is a complete, tested, physiologically-grounded pipeline for wearable stress detection: rigorous subject-independent (LOSO) evaluation, a model that clearly and consistently beats baseline on every held-out subject, and a three-method interpretability analysis (permutation importance, a from-scratch verified Shapley-value estimator, and a univariate cross-check) that explains *why* it works rather than just reporting that it does. For the full methodology, results, error analysis, limitations, and future work, see **[`docs/README.md`](docs/README.md)**.
