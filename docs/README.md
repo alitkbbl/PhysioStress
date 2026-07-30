@@ -1,8 +1,8 @@
 # 📖 Documentation
 
-This directory contains the technical documentation for the **PhysioStress** project. 📘
+This directory contains the technical documentation for the **PhysioStress** project. 
 
-The report covers the project motivation, dataset, methodology, experimental results, and interpretability analysis for a wearable-based physiological stress detection system. It also compares different machine learning models and evaluates them using Leave-One-Subject-Out (LOSO) validation. 📊
+The report covers the project motivation, dataset, methodology, experimental results, and interpretability analysis for a wearable-based physiological stress detection system. It also compares different machine learning models and evaluates them using Leave-One-Subject-Out (LOSO) validation. 
 
 The documentation is available in two languages:
 
