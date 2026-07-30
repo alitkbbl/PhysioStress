@@ -154,6 +154,34 @@ Per-subject held-out accuracy for the best model (Gradient Boosting), sorted:
 
 Mean 0.891, std 0.067 — a real, non-trivial spread (not every held-out subject is equally easy), which is itself an important and expected finding: **generalizing to a new person is harder for some people than others**, discussed further in Section 6.
 
+### 4.4 Independent replication & normalization ablation (Notebook 03)
+
+`notebooks/03_loso_training_validation.ipynb` is a second, independently written implementation of the LOSO training/evaluation loop — explicit fold-by-fold, with no `train_test_split` and `StandardScaler` fit strictly on each fold's own training subjects — built partly as a transparency/verification exercise (a reader can check every step without cross-referencing `src/modeling.py`) and partly to answer a specific methodological question: **does per-subject baseline normalization (Section 3.3) actually help, or would a simpler global feature scaler do just as well?**
+
+The notebook trains the same `HistGradientBoostingClassifier` under the same LOSO protocol, but on raw (non-subject-normalized) features, scaled with a single `StandardScaler` fit per fold on the pooled 14 training subjects (fit-on-train-only, so still leakage-free). Results:
+
+| Approach | Accuracy | F1-macro | LOSO acc. std |
+|---|---|---|---|
+| Main pipeline (per-subject baseline normalization, Section 3.3) | 0.891 | 0.862 | 0.067 |
+| Notebook 03 (global per-fold scaler, raw features) | **0.958** | **0.945** | 0.046 |
+
+![Notebook 03 per-subject F1](../results/figures/loso_per_subject_f1.png)
+![Notebook 03 confusion matrix](../results/figures/loso_confusion_matrix.png)
+
+Aggregated confusion matrix (Notebook 03):
+
+| True \ Predicted | baseline | stress | amusement |
+|---|---|---|---|
+| **baseline** | 221 | 1 | 3 |
+| **stress** | 1 | 161 | 3 |
+| **amusement** | 6 | 7 | 92 |
+
+This is a genuine, reproducible finding, not a bug — confirmed by re-running Notebook 03's identical fold loop on the main pipeline's per-subject-normalized feature table and recovering ~0.89 accuracy, matching the main pipeline exactly. The explanation: per-subject baseline normalization estimates each subject's centering statistics from only ~15 baseline windows, a fairly small sample; on this dataset, that estimation noise appears to outweigh the benefit of removing between-subject confounds, so a simpler, more data-efficient global scaler generalizes slightly better. This is a valuable finding in its own right: **normalization strategy is itself a modeling choice that should be validated empirically, not applied by default.**
+
+Feature importance (via the same custom Shapley-value estimator, applied independently inside Notebook 03 to its differently-normalized model) again points to breathing and movement as the dominant signals — `resp_std`, `acc_chest_activity_counts`, `acc_wrist_activity_counts`, `resp_rate_bpm`, and `resp_amplitude` are the top 5 — though the ranking is much more concentrated here (`resp_std` alone accounts for roughly 4.6× the next-largest feature's contribution, versus the more gradually-declining ranking in Section 5). That the same two modalities (respiration, movement) top the ranking under two independently-normalized models, computed with two independently-run Shapley estimations, is useful convergent validation for this project's central interpretability finding, even though the precise ranking and relative magnitudes shift with the normalization choice.
+
+Per-subject LOSO variance in Notebook 03 shows the same qualitative pattern as Section 4.3: most subjects are classified very well (6 of 15 at 100% accuracy), with one subject — S4 — notably harder (84.8% accuracy, 0.757 F1-macro). This is consistent with the reactivity-driven generalization-difficulty story developed in Section 6.2: S4's movement reactivity multiplier is 0.50, well below the population's typical range, in a run where movement/activity-count features are especially dominant.
+
 ---
 
 ## 5. Interpretability
@@ -216,6 +244,7 @@ The two methods agree closely on the top 5: **`resp_amplitude`**, **`acc_wrist_a
 - The LOSO protocol combined with per-subject baseline normalization produced a model that generalizes well to unseen subjects (0.891 accuracy, clearly and consistently above the 0.455 majority baseline on every single held-out subject) without any sign of the subject-identity "shortcut learning" that random k-fold splitting would risk.
 - All three interpretability methods (Shapley values, LOSO permutation importance, univariate ANOVA) broadly agree on the same handful of top features, which is reassuring — a finding that only showed up in one method would be much less trustworthy.
 - The Shapley-value implementation's efficiency-property check (predicted-output reconstruction to within ~4% mean relative error) gives concrete, quantitative confidence that the custom implementation is computing what it claims to, not just producing plausible-looking numbers.
+- A second, independently written implementation of the LOSO loop (Notebook 03, Section 4.4) — different feature-normalization strategy, independently-run Shapley estimation — converges on the same two dominant modalities (respiration, movement) and the same qualitative LOSO-variance pattern (most subjects near-perfect, a handful notably harder). Agreement between two independently-coded analyses is a stronger form of validation than either one alone.
 
 ### 6.2 What didn't work as well, and error analysis
 

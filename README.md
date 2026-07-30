@@ -130,13 +130,15 @@ PhysioStress/
 ├── notebooks/
 │   ├── 01_exploratory_data_analysis.ipynb
 │   ├── 02_results_walkthrough.ipynb
-│   └── 03_loso_training_validation.ipynb  — standalone LOSO train/eval walkthrough for
-│                                             HistGradientBoostingClassifier; writes to its
-│                                             own `models/`, `figures/`, `results/loso_metrics.csv`
+│   └── 03_loso_training_validation.ipynb  — independent, explicit fold-by-fold LOSO
+│                                             train/eval walkthrough for
+│                                             HistGradientBoostingClassifier (see
+│                                             docs/REPORT.md Section 4.4); saves into
+│                                             the same results/{models,figures,tables}/
 ├── results/
 │   ├── figures/             — all generated plots (PNG)
 │   ├── tables/               — all generated metrics/importance tables (CSV)
-│   └── models/                — the saved final trained model (pickle)
+│   └── models/                — saved trained models (pickle + joblib)
 ├── docs/
 │   └── REPORT.md             — full technical report
 └── tests/                     — unit tests (unittest, run with `python -m unittest discover`)
