@@ -1,56 +1,96 @@
 # PhysioStress — Multimodal Stress Detection from Wearable Physiological Signals
 
-A complete, reproducible machine learning pipeline that classifies a person's affective state — **baseline / stress / amusement** — from chest- and wrist-worn physiological sensors (ECG, EDA, EMG, respiration, skin temperature, and accelerometry), evaluated with **Leave-One-Subject-Out cross-validation** and explained with **two independent feature-importance methods** (permutation importance and Shapley values).
+> **An end-to-end, reproducible machine learning pipeline for person-independent affective state classification using multimodal physiological sensors.**
 
-## Project summary
+<!-- Badges Header -->
+<div align="left">
+  
+![Task](https://img.shields.io/badge/Task-Stress%20Detection-critical)
+![Signals](https://img.shields.io/badge/Signals-Multimodal-8A2BE2)
+![Explainability](https://img.shields.io/badge/Explainability-Permutation%20%2B%20Shapley-teal)
 
-PhysioStress is an end-to-end ML pipeline — signal cleaning → windowed feature extraction (EDA tonic/phasic decomposition, HRV, EMG, respiration, temperature, accelerometry) → subject-normalized, subject-independent classification → dual-method interpretability — that detects stress from wearable sensor data, the kind of problem underlying real consumer stress-tracking features (Fitbit, Apple Watch, Whoop). It compares four classifiers under the field-standard Leave-One-Subject-Out protocol, reaching **89.1% accuracy / 0.86 F1-macro** with gradient-boosted trees (vs. 45.5% for a majority-class baseline), and explains *why* the model makes its predictions using both permutation importance and a custom-built Shapley-value implementation, cross-checked against simple univariate statistics.
+</div>
 
-## Motivation and real-world relevance
+---
 
-Chronic stress is linked to cardiovascular disease, weakened immune function, and mental health conditions, and most of it goes unnoticed until it manifests as a health problem. Wearables (smartwatches, fitness bands, chest straps) now continuously capture exactly the signals — heart rate variability, skin conductance, skin temperature, movement — that reflect autonomic nervous system arousal, in principle making passive, real-time stress monitoring possible outside a lab. The hard part is turning noisy, multi-sensor, highly individual physiological data into a reliable, *person-independent* classifier: a model has to generalize to a new person's physiology on day one, without retraining. That is exactly what this project builds and rigorously evaluates.
+## 📌 Project Summary
 
-## Dataset & Pipeline
+**PhysioStress** is an end-to-end Machine Learning pipeline that classifies human affective states — **Baseline**, **Stress**, and **Amusement** — from physiological signals captured by chest- and wrist-worn sensors (ECG, EDA, EMG, respiration, skin temperature, and accelerometry).
 
-15 subjects, each wearing chest and wrist sensors (ECG, EDA, EMG, respiration, temperature, accelerometry) across baseline/stress/amusement conditions, segmented into 495 sixty-second windows. Full dataset description, file formats, and regeneration instructions: **[`data/README.md`](data/README.md)**.
+Designed to mimic real-world consumer stress-tracking features (found in devices like Fitbit, Apple Watch, and Whoop), the pipeline bridges raw sensor processing and actionable interpretability across four core stages:
 
-> **A note on the data.** The dataset used in this project was manually created rather than collected from real hardware, using a physiologically-motivated signal model (`src/synthetic_data.py`) designed to reproduce realistic autonomic response patterns for each condition. This made it possible to fully control ground-truth conditions and keep the entire pipeline reproducible end-to-end.
+1.  **Signal Cleaning & Preprocessing:** Filtering noise and artifacts from raw multi-sensor streams.
+2.  **Windowed Feature Extraction:** Extracting EDA tonic/phasic components, HRV parameters, EMG power, respiration rates, temperature trends, and accelerometry dynamics.
+3.  **Subject-Normalized Classification:** Evaluating 4 classifiers under strict **Leave-One-Subject-Out (LOSO)** cross-validation to guarantee zero data leakage between subjects.
+4.  **Dual-Method Interpretability:** Explaining model predictions using both Permutation Importance and a custom Shapley-value implementation, cross-checked against univariate statistics.
 
-The pipeline runs in four sequential stages — preprocessing, feature extraction, LOSO-validated modeling, and interpretability — each an independently runnable script. Module-by-module breakdown and full pipeline flow: **[`src/README.md`](src/README.md)**.
+---
 
-## Installation & how to run
+## 💡 Motivation & Real-World Relevance
 
+Chronic stress is strongly linked to cardiovascular diseases, immune dysfunction, and mental health challenges. However, stress often goes unmanaged until noticeable clinical symptoms appear.
+
+Modern wearables continuously record biological indicators driven by the **Autonomic Nervous System (ANS)**:
+*  **Heart Rate Variability (HRV)** — Reflects sympathetic / parasympathetic tone balance.
+*  **Electrodermal Activity (EDA)** — Directly indexes sympathetic arousal via sweat gland activation.
+*  **Skin Temperature & Respiration** — Capture physiological relaxation vs. fight-or-flight responses.
+*  **Accelerometry** — Controls for physical movement artifacts versus true emotional stress.
+
+### The Core ML Challenge:
+> **How do we build a model that generalizes to a new user on Day 1 without retraining?**
+>
+> Physiological baselines vary dramatically between individuals. The primary hurdle in wearable health technology is creating a **person-independent** classifier. PhysioStress addresses this challenge through subject-wise normalization and rigorous zero-leakage cross-validation.
+
+---
+
+## 🔬 Dataset & Pipeline Overview
+
+The dataset covers **15 subjects** monitored across chest and wrist devices during Baseline, Stress, and Amusement protocols, yielding **495 sixty-second windowed samples**.
+
+> [!NOTE]
+> **Synthetic Data Notice:** To ensure full end-to-end reproducibility without external hardware constraints, the dataset in this repository was generated using a physiologically motivated signal model (`src/synthetic_data.py`). This script reproduces realistic autonomic response patterns for each affective condition while enabling controlled ground-truth evaluation.
+
+* 📁 **Data Architecture & Formats:** Detailed dataset structure and regeneration steps can be found in **[`data/README.md`](data/README.md)**.
+* ⚙️ **Modular Execution Pipeline:** The four sequential stages (preprocessing, extraction, LOSO training, XAI) run as independent modules. Full architectural workflow is documented in **[`src/README.md`](src/README.md)**.
+
+## 🚀 Getting Started
+
+Follow these steps to set up the environment and reproduce the full pipeline—from synthetic signal generation to model interpretability.
+
+### ⚙️ Installation & Environment Setup
+
+Clone the repository and install the dependencies. Using a virtual environment is highly recommended to keep your global Python setup clean.
 ```bash
-git clone <this-repo>
+# Clone the repository
+git clone https://github.com/alitkbbl/PhysioStress.git
 cd PhysioStress
-python3 -m venv venv && source venv/bin/activate   # optional but recommended
+
+# Setup virtual environment
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install requirements
+pip install --upgrade pip
 pip install -r requirements.txt
-
-# 1. Generate the dataset
-python3 src/synthetic_data.py
-
-# 2. Extract features from all subjects
-python3 src/feature_extraction.py
-
-# 3. Run LOSO cross-validation across all models
-python3 src/modeling.py
-
-# 4. Run the interpretability analysis (native importance + Shapley values)
-python3 src/interpretability.py
-
-# 5. Run the test suite
-python3 -m unittest discover -s tests -v
 ```
 
 Each script is independently runnable and writes its outputs to `data/processed/` or `results/` — `feature_extraction.py` reads what `synthetic_data.py` wrote to `data/raw/`, `modeling.py` reads `data/processed/features.csv`, and `interpretability.py` reads `data/processed/features_normalized.csv` plus `results/tables/model_comparison.csv`. Total runtime on a laptop CPU: **under 5 minutes** end-to-end (feature extraction and LOSO CV are each a few seconds; the Shapley-value analysis is the slowest step at roughly 2–3 minutes). The notebooks in `notebooks/` also self-generate any missing prerequisite files if run directly.
 
+---
+
 ## Key results
 
-The best model (gradient-boosted trees) reaches **89.1% accuracy / 0.862 F1-macro** under Leave-One-Subject-Out cross-validation — well above the 45.5%-accuracy majority-class baseline — with most confusion occurring between stress and amusement (both high-arousal states) rather than between either and the calmer baseline.
+The best model (gradient-boosted trees) reaches **89.1% accuracy / 0.862 macro-F1** under Leave-One-Subject-Out (LOSO) cross-validation — well above the **45.5%** majority-class baseline. Most errors come from **stress vs. amusement** confusion (both high-arousal states), rather than from either vs. the calmer baseline.
 
 ![Model comparison](results/figures/model_comparison.png)
 
-Full model comparison, confusion matrices, per-subject LOSO variance, three-method feature-importance analysis, a normalization-strategy ablation, and error analysis: **[`docs/REPORT.md`](docs/REPORT.md)**.
+### 📖 Full technical report (bilingual):
+- [ReportEN.pdf](./ReportEN.pdf) – English version
+- [ReportFA.pdf](./ReportFA.pdf) – Persian (Farsi) version
+
+Includes full model comparison, confusion matrices, per-subject LOSO variance, feature-importance analysis (SHAP + permutation + univariate), normalization ablation, and error analysis.
+
+---
 
 ## Project structure
 
