@@ -50,7 +50,7 @@ The dataset covers **15 subjects** monitored across chest and wrist devices duri
 > [!NOTE]
 > **Synthetic Data Notice:** To ensure full end-to-end reproducibility without external hardware constraints, the dataset in this repository was generated using a physiologically motivated signal model (`src/synthetic_data.py`). This script reproduces realistic autonomic response patterns for each affective condition while enabling controlled ground-truth evaluation.
 
-* 📁 **Data Architecture & Formats:** Detailed dataset structure and regeneration steps can be found in **[`data/README.md`](data/README.md)**.
+* 📁 **Data Architecture:** Detailed dataset structure and regeneration steps can be found in **[`data/README.md`](data/README.md)**.
 * ⚙️ **Modular Execution Pipeline:** The four sequential stages (preprocessing, extraction, LOSO training, XAI) run as independent modules. Full architectural workflow is documented in **[`src/README.md`](src/README.md)**.
 
 ---
