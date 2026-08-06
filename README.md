@@ -95,8 +95,8 @@ The best model (gradient-boosted trees) reaches **89.1% accuracy / 0.862 macro-F
 ![Model comparison](results/figures/model_comparison.png)
 
 ### 📖 Full technical report (bilingual):
-- [ReportEN.pdf](./ReportEN.pdf) – English version
-- [ReportFA.pdf](./ReportFA.pdf) – Persian (Farsi) version
+- [ReportEN.pdf](./doc/ReportEN.pdf) – English version
+- [ReportFA.pdf](./doc/ReportFA.pdf) – Persian (Farsi) version
 
 Includes full model comparison, confusion matrices, per-subject LOSO variance, feature-importance analysis (SHAP + permutation + univariate), normalization ablation, and error analysis.
 
@@ -128,11 +128,11 @@ PhysioStress/
 │                                             train/eval walkthrough (see docs/REPORT.md
 │                                             Section 4.4); saves into the same results/
 ├── results/
-│   ├── figures/             — all generated plots (PNG)
+│   ├── figures/              — all generated plots (PNG)
 │   ├── tables/               — all generated metrics/importance tables (CSV)
-│   └── models/                — saved trained models (pickle + joblib)
+│   └── models/               — saved trained models (pickle + joblib)
 ├── docs/
-│   └── REPORT.md             — full technical report
+│   └── Reprots                — full technical report
 └── tests/                     — unit tests (unittest, run with `python -m unittest discover`)
 ```
 ---
